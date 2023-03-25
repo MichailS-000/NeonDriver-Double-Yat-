@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR;
 
 public class CarController : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class CarController : MonoBehaviour
 	// Settings
 	[SerializeField] private float motorForce, breakForce, maxSteerAngle;
 
-	[SerializeField] XRController leftHand, rightHand;
+	[SerializeField] SteeringWheel steeringWheel;
 
 	// Wheel Colliders
 	[SerializeField] private WheelCollider frontLeftWheelCollider, frontRightWheelCollider;
@@ -36,16 +37,16 @@ public class CarController : MonoBehaviour
 
 	private void GetInput() {
 		// Steering Input
-		horizontalInput = Input.GetAxis("Horizontal");
+		horizontalInput = steeringWheel.GetAxis();
 
 		// Acceleration Input
-		rightHand.inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out rightTriggerValue);
-		leftHand.inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.trigger, out leftTriggerValue);
+		InputDevices.GetDeviceAtXRNode(XRNode.RightHand).TryGetFeatureValue(CommonUsages.trigger, out rightTriggerValue);
+		InputDevices.GetDeviceAtXRNode(XRNode.LeftHand).TryGetFeatureValue(CommonUsages.trigger, out leftTriggerValue);
 
 		verticalInput = rightTriggerValue - leftTriggerValue;
 
 		// Breaking Input
-		rightHand.inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primaryButton, out isBreaking);
+		InputDevices.GetDeviceAtXRNode(XRNode.RightHand).TryGetFeatureValue(CommonUsages.primaryButton, out isBreaking);
 	}
 
 	private void HandleMotor() {
@@ -88,6 +89,7 @@ public class CarController : MonoBehaviour
 		if (other.CompareTag("Player"))
 		{
 			isControlling = true;
+			other.transform.parent = transform;
 		}
 	}
 
@@ -96,6 +98,7 @@ public class CarController : MonoBehaviour
 		if (other.CompareTag("Player"))
 		{
 			isControlling = false;
+			other.transform.parent = null;
 		}
 	}
 }
