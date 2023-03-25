@@ -5,9 +5,11 @@ using UnityEngine;
 public class Tumbler : MonoBehaviour
 {
     public UnityEvent onPress;
+	[SerializeField] LayerMask mask;
 
 	private void OnTriggerStay(Collider other)
 	{
-		onPress.Invoke();
+		if (other.CompareTag("XRController"))
+			onPress.Invoke();
 	}
 }

@@ -8,6 +8,7 @@ public class Button : MonoBehaviour
 
 	private void OnTriggerEnter(Collider other)
 	{
-		onClick.Invoke();
+		if (other.CompareTag("XRController"))
+			onClick.Invoke();
 	}
 }
